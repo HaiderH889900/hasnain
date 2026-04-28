@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TKA Registration System</title>
+    <style>
+        :root {
+            --navy: #000080;
+            --white: #ffffff;
+            --accent: #007BFF;
+            --bg-image: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f4f4f9;
+            background-image: var(--bg-image);
+            background-size: cover;
+            transition: all 0.5s ease;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--navy);
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        /* Layout */
+        #main-app { display: none; }
+
+        header {
+            background: var(--navy);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: 0.4s ease; /* Flyout Animation */
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .sidebar.active { left: 0; }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid var(--navy);
+        }
+
+        /* UI Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .blue-box {
+            background: var(--accent);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-save { background: #28a745; color: white; }
+        .btn-discard { background: #dc3545; color: white; }
+        .btn-print { background: #ffc107; color: black; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th { background: var(--navy); color: white; }
+
+        .dots { cursor: pointer; font-weight: bold; font-size: 20px; }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+        }
+
+        .signature {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--navy);
+        }
+
+        .settings-icon { cursor: pointer; font-size: 24px; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="color: var(--navy)">CEO Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button class="btn btn-save" style="margin-top:15px; width:100%" onclick="login()">Login</button>
+    </div>
+</div>
+
+<div id="main-app">
+    <header>
+        <div>
+            <span class="settings-icon" onclick="toggleSidebar()">⚙️ Settings</span>
+        </div>
+        <h2>The Knowledge Academy of Science Jallah Jeem</h2>
+        <button class="btn btn-discard" onclick="logout()">Logout</button>
+    </header>
+
+    <div id="sidebar" class="sidebar">
+        <h3>Settings</h3>
+        <hr>
+        <h4>Change Theme</h4>
+        <button onclick="changeTheme('linear-gradient(to right, #ff7e5f, #feb47b)')">Sunset</button>
+        <button onclick="changeTheme('linear-gradient(to right, #00c6ff, #0072ff)')">Ocean</button>
+        <button onclick="changeTheme('none')">Default White</button>
+        
+        <h4>Change Password</h4>
+        <input type="password" id="oldPass" placeholder="Old Password">
+        <input type="password" id="newPass" placeholder="New Password">
+        <button class="btn btn-save" onclick="changePassword()" style="margin-top:10px">Update</button>
+        <br><br>
+        <button class="btn btn-discard" onclick="toggleSidebar()">Close</button>
+    </div>
+
+    <div class="container">
+        <h3>Student Registration</h3>
+        <div class="form-grid">
+            <input type="text" id="sName" placeholder="Student Name">
+            <input type="text" id="fName" placeholder="Father's Name">
+            <input type="text" id="address" placeholder="Address">
+            <input type="text" id="mobile" placeholder="Mobile Number">
+            <input type="date" id="joinDate">
+            <input type="text" id="className" placeholder="Class">
+            <input type="number" id="totalFee" placeholder="Total Fees" oninput="calcRemaining()">
+            <input type="number" id="obtainedFee" placeholder="Obtained Fees" oninput="calcRemaining()">
+            <input type="number" id="remainingFee" placeholder="Remaining Fees" readonly>
+            <select id="feeMonth">
+                <option>January Fee</option><option>February Fee</option><option>March Fee</option>
+                <option>April Fee</option><option>May Fee</option><option>June Fee</option>
+                <option>July Fee</option><option>August Fee</option><option>September Fee</option>
+                <option>October Fee</option><option>November Fee</option><option>December Fee</option>
+            </select>
+        </div>
+
+        <div class="blue-box">
+            <button class="btn btn-save" onclick="saveStudent()">Save Student</button>
+            <button class="btn btn-discard" onclick="clearForm()">Discard</button>
+            <button class="btn btn-print" onclick="window.print()">Print Records</button>
+        </div>
+
+        <h3>Saved Student Database (CEO Access)</h3>
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>S#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Month</th>
+                    <th>Remaining</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>Made by IT Engineer: <span class="signature">Hasnain Haider</span></p>
+        <p class="signature">03014464374</p>
+    </footer>
+</div>
+
+<script>
+    let students = [];
+    let currentPassword = "12345";
+
+    function login() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if(u === "Hasnain" && p === currentPassword) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+        } else {
+            alert("Invalid Credentials");
+        }
+    }
+
+    function logout() {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('main-app').style.display = 'none';
+    }
+
+    function calcRemaining() {
+        const total = document.getElementById('totalFee').value || 0;
+        const obtained = document.getElementById('obtainedFee').value || 0;
+        document.getElementById('remainingFee').value = total - obtained;
+    }
+
+    function saveStudent() {
+        const student = {
+            id: students.length + 1,
+            name: document.getElementById('sName').value,
+            phone: document.getElementById('mobile').value,
+            month: document.getElementById('feeMonth').value,
+            remaining: document.getElementById('remainingFee').value
+        };
+        
+        students.push(student);
+        updateTable();
+        clearForm();
+    }
+
+    function updateTable() {
+        const tbody = document.querySelector('#studentTable tbody');
+        tbody.innerHTML = '';
+        students.forEach((s, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.phone}</td>
+                    <td>${s.month}</td>
+                    <td>${s.remaining}</td>
+                    <td class="dots" onclick="alert('Student Detail: ' + JSON.stringify(students[${index}]))">...</td>
+                </tr>
+            `;
+        });
+    }
+
+    function clearForm() {
+        const inputs = document.querySelectorAll('.form-grid input');
+        inputs.forEach(i => i.value = '');
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function changeTheme(color) {
+        document.documentElement.style.setProperty('--bg-image', color);
+    }
+
+    function changePassword() {
+        const oldP = document.getElementById('oldPass').value;
+        const newP = document.getElementById('newPass').value;
+        if(oldP === currentPassword) {
+            currentPassword = newP;
+            alert("Password Changed Successfully!");
+        } else {
+            alert("Old password incorrect");
+        }
+    }
+</script>
+</body>
+</html>
